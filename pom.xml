@@ -23,7 +23,7 @@
         <lombok.version>1.18.10</lombok.version>
         <itext.version>5.5.10</itext.version>
         <bouncycastle.version>1.56</bouncycastle.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <maven-plugin.version>3.0.1</maven-plugin.version>
     </properties>
 
