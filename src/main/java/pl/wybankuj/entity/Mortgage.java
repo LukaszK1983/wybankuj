@@ -1,5 +1,7 @@
 package pl.wybankuj.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -163,6 +165,7 @@ public class Mortgage {
         this.maxCreditPeriod = maxCreditPeriod;
     }
 
+    @JsonBackReference
     public Bank getBank() {
         return bank;
     }

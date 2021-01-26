@@ -1,5 +1,6 @@
 package pl.wybankuj.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import pl.wybankuj.validator.CheckPhone;
 import pl.wybankuj.validator.CheckZipCode;
 
@@ -50,6 +51,7 @@ public class Agency {
     @ManyToOne
     @JoinColumn(name = "bank_id")
     @NotNull
+    @JsonBackReference
     private Bank bank;
 
     public Long getId() {

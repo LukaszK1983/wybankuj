@@ -1,0 +1,80 @@
+.DivFooter {
+    text-align: left;
+    border: 0;
+    margin-top: 2vmax;
+    display: inline-block;
+    background-color: #19364D;
+    color: white;
+}
+
+.DivLeft {
+    width: 45%;
+    float: left;
+    clear: right;
+    margin-right: 5%;
+    padding-left: 5%;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.DivRight {
+    width: 45%;
+    float: right;
+    clear: left;
+    margin-left: 5%;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.ContainerFluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right:auto;
+    margin-left: auto;
+    text-align: left;
+}
+
+.Row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.ColMd6 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-top: 1rem;
+}
+
+.TextUppercas {
+    text-transform: uppercase;
+}
+
+.Clearfix {
+    clear: both;
+    content: "";
+    width: 100%!important;
+    display: none!important;
+    padding-bottom: 1rem!important;
+}
+
+.aFooter {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.aFooter:hover {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.pInformation {
+    font-size: 8px;
+    text-align: justify;
+}

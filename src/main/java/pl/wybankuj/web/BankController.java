@@ -1,21 +1,17 @@
 package pl.wybankuj.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pl.wybankuj.entity.Bank;
 import pl.wybankuj.service.BankService;
 
-import javax.validation.Valid;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-@Controller
-@RequestMapping("/bank")
+@CrossOrigin(origins = "http://localhost:8081")
+@RestController
 public class BankController {
 
     private final BankService bankService;
@@ -24,47 +20,78 @@ public class BankController {
         this.bankService = bankService;
     }
 
-    @GetMapping
-    public String allBanks(Model model) {
-        model.addAttribute("banks", bankService.findAllBanks());
-        return "allbanks";
-    }
+    @RequestMapping(
+            value = "/bank",
+            produces = "application/json",
+            method = {RequestMethod.GET})
+    public ResponseEntity<List<Bank>> allBanks() {
+        try {
+            List<Bank> banks = new ArrayList<>();
+            bankService.findAllBanks().forEach(banks::add);
 
-    @GetMapping("/add")
-    public String addInitForm(Model model) {
-        model.addAttribute("bank", new Bank());
-        return "addbank";
-    }
+            if (banks.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
 
-    @PostMapping("/add")
-    public String addPostForm(@RequestParam("file") MultipartFile file, @Valid Bank bank, BindingResult bindingResult) throws IOException {
-        if (bindingResult.hasErrors()) {
-            return "addbank";
+            return new ResponseEntity<>(banks, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        bankService.addBankWithLogo(file, bank);
-        return "redirect:/bank";
     }
 
-    @GetMapping("/edit")
-    public String editInitForm(@RequestParam Long id, Model model) {
-        model.addAttribute("bank", bankService.findBankById(id));
-        return "editbank";
+    @RequestMapping(
+            value = "/bank/{id}",
+            produces = "application/json",
+            method = {RequestMethod.GET})
+    public ResponseEntity<Bank> getBankById(@PathVariable("id") Long id) {
+        Optional<Bank> bankData = bankService.findBankById(id);
+
+        return bankData.map(bank -> new ResponseEntity<>(bank, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/edit")
-    public String editPostForm(@RequestParam("file") MultipartFile file, @Valid Bank bank,
-                               @RequestParam String logo, BindingResult bindingResult) throws IOException {
-        if (bindingResult.hasErrors()) {
-            return "editbank";
+    @RequestMapping(
+            value = "/bank/add",
+            produces = "application/json",
+            method = {RequestMethod.POST})
+    public ResponseEntity<Bank> createBank(@RequestBody Bank bank) {
+        try {
+            Bank bankToSave = bankService.addBank(new Bank(bank.getBankName(), bank.getLogo()));
+            return new ResponseEntity<>(bankToSave, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        bankService.editBank(file, bank, logo);
-        return "redirect:/bank";
     }
 
-    @GetMapping("/delete")
-    public String deleteBank(@RequestParam Long id) {
-        bankService.deleteLogo(bankService.findBankById(id).get().getLogo());
-        bankService.deleteBank(id);
-        return "redirect:/bank";
+    @RequestMapping(
+            value = "/bank/{id}",
+            produces = "application/json",
+            method = {RequestMethod.PUT})
+    public ResponseEntity<Bank> updateBank(@PathVariable("id") long id, @RequestBody Bank bank) {
+        Optional<Bank> bankData = bankService.findBankById(id);
+
+        if (bankData.isPresent()) {
+            Bank bankToEdit = bankData.get();
+            bankToEdit.setBankName(bank.getBankName());
+            bankToEdit.setLogo(bank.getLogo());
+            return new ResponseEntity<>(bankService.editBank2(bankToEdit), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(
+            value = "/bank/{id}",
+            produces = "application/json",
+            method = {RequestMethod.DELETE})
+    public ResponseEntity<HttpStatus> deleteBank(@PathVariable("id") Long id) {
+        try {
+            bankService.deleteBank(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

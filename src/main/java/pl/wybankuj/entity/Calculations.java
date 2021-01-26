@@ -9,14 +9,18 @@ public class Calculations {
     BigDecimal insurance;
     BigDecimal interests;
     BigDecimal totalCost;
+    String logo;
+    Long bankId;
 
-    public Calculations(Loan loan, BigDecimal payment, BigDecimal serviceCharge, BigDecimal insurance, BigDecimal interests, BigDecimal totalCost) {
+    public Calculations(Loan loan, BigDecimal payment, BigDecimal serviceCharge, BigDecimal insurance, BigDecimal interests, BigDecimal totalCost, String logo, Long bankId) {
         this.loan = loan;
         this.payment = payment;
         this.serviceCharge = serviceCharge;
         this.insurance = insurance;
         this.interests = interests;
         this.totalCost = totalCost;
+        this.logo = logo;
+        this.bankId = bankId;
     }
 
     public Loan getLoan() {
@@ -65,5 +69,21 @@ public class Calculations {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public Long getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(Long bankId) {
+        this.bankId = bankId;
     }
 }

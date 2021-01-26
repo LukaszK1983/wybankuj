@@ -9,14 +9,18 @@ public class CalculationsMortgage {
     BigDecimal insurance;
     BigDecimal interests;
     BigDecimal totalCost;
+    String logo;
+    Long bankId;
 
-    public CalculationsMortgage(Mortgage mortgage, BigDecimal payment, BigDecimal serviceCharge, BigDecimal insurance, BigDecimal interests, BigDecimal totalCost) {
+    public CalculationsMortgage(Mortgage mortgage, BigDecimal payment, BigDecimal serviceCharge, BigDecimal insurance, BigDecimal interests, BigDecimal totalCost, String logo, Long bankId) {
         this.mortgage = mortgage;
         this.payment = payment;
         this.serviceCharge = serviceCharge;
         this.insurance = insurance;
         this.interests = interests;
         this.totalCost = totalCost;
+        this.logo = logo;
+        this.bankId = bankId;
     }
 
     public Mortgage getMortgage() {
@@ -65,5 +69,21 @@ public class CalculationsMortgage {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public Long getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(Long bankId) {
+        this.bankId = bankId;
     }
 }

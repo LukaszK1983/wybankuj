@@ -1,20 +1,16 @@
 package pl.wybankuj.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import pl.wybankuj.entity.*;
 import pl.wybankuj.repository.MortgageRepository;
 import pl.wybankuj.service.MortgageService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-@Controller
+@CrossOrigin(origins = "http://localhost:8081")
+@RestController
 public class HomeMortgageController {
 
     private final MortgageRepository mortgageRepository;
@@ -25,54 +21,54 @@ public class HomeMortgageController {
         this.mortgageService = mortgageService;
     }
 
-    @GetMapping("/mortgageParameters")
-    public String getMortgageParameters(Model model) {
-        model.addAttribute("userMortgage", new UserMortgage());
-        return "mortgageparameters";
+    @RequestMapping(
+            value = "/calculateMortgage/{amount}/{creditPeriod}/{age}/{chooseServiceCharge}/{chooseInsurance}/{contributionPercent}/{cost}",
+            produces = "application/json",
+            method = {RequestMethod.GET})
+    public List<MortgageWithPayment> allMortgageParameters(@PathVariable("amount") int amount,
+                                                           @PathVariable("creditPeriod") int creditPeriod,
+                                                           @PathVariable("age") int age,
+                                                           @PathVariable("chooseServiceCharge") String chooseServiceCharge,
+                                                           @PathVariable("chooseInsurance") String chooseInsurance,
+                                                           @PathVariable("contributionPercent") BigDecimal contributionPercent,
+                                                           @PathVariable("cost") BigDecimal cost) {
+
+        try {
+            List<Mortgage> mortgages = mortgageService.chooseOffers(chooseInsurance,
+                    chooseServiceCharge, amount, creditPeriod, age, contributionPercent);
+            List<MortgageWithPayment> mortgageWithPayments = mortgageService.calculateMortgagePayment(mortgages, amount, creditPeriod);
+
+            if (mortgageWithPayments.isEmpty()) {
+                return null;
+            }
+
+            return mortgageWithPayments;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    @PostMapping("/mortgageParameters")
-    public String postMortgageParameters(@ModelAttribute UserMortgage userMortgage,
-                                         Model model) {
-        List<Mortgage> mortgages = mortgageService.chooseOffers(userMortgage.getChooseInsurance(),
-                userMortgage.getChooseServiceCharge(), userMortgage.getAmount(),
-                userMortgage.getCreditPeriod(), userMortgage.getAge(), userMortgage.getContributionPercent());
-        Map<Mortgage, BigDecimal> mortgagesWithPayments = mortgageService.calculateMortgagePayment(mortgages, userMortgage.getAmount(), userMortgage.getCreditPeriod());
+    @RequestMapping(
+            value = "/mortgageDetails/{mortgageId}/{amount}/{creditPeriod}/{age}/{chooseServiceCharge}/{chooseInsurance}/{contributionPercent}/{cost}",
+            produces = "application/json",
+            method = {RequestMethod.GET})
+    public List<CalculationsMortgage> getLoanDetails(@PathVariable("mortgageId") Long mortgageId,
+                                                     @PathVariable("amount") int amount,
+                                                     @PathVariable("creditPeriod") int creditPeriod,
+                                                     @PathVariable("age") int age,
+                                                     @PathVariable("chooseServiceCharge") String chooseServiceCharge,
+                                                     @PathVariable("chooseInsurance") String chooseInsurance,
+                                                     @PathVariable("contributionPercent") BigDecimal contributionPercent,
+                                                     @PathVariable("cost") BigDecimal cost) {
 
-        model.addAttribute("mortgageSimulation", mortgagesWithPayments);
-        model.addAttribute("userMortgage", userMortgage);
+        List<CalculationsMortgage> calculationsMortgageList = new ArrayList<>();
 
-        return "calculatemortgage";
-    }
+        CalculationsMortgage calculationsMortgage = calculateMortgageParameteres(mortgageId, amount, creditPeriod, age, chooseServiceCharge, chooseInsurance, contributionPercent);
 
-    @PostMapping("/mortgageDetails")
-    public String getMortgageDetails(@RequestParam Long mortgageId, @RequestParam Long mortgageId2,
-                                     @RequestParam Long mortgageId3, @ModelAttribute UserMortgage userMortgage,
-                                     Model model) {
+        calculationsMortgageList.add(calculationsMortgage);
 
-        if (mortgageId > 0) {
-            CalculationsMortgage calculations1 = calculateMortgageParameteres(mortgageId, userMortgage);
-            model.addAttribute("calculations1", calculations1);
-        }
-
-        if (mortgageId2 > 0) {
-            boolean testMortgage2 = true;
-            model.addAttribute("testMortgage2", testMortgage2);
-
-            CalculationsMortgage calculations2 = calculateMortgageParameteres(mortgageId2, userMortgage);
-            model.addAttribute("calculations2", calculations2);
-        }
-
-        if (mortgageId3 > 0) {
-            boolean testMortgage3 = true;
-            model.addAttribute("testMortgage3", testMortgage3);
-
-            CalculationsMortgage calculations3 = calculateMortgageParameteres(mortgageId3, userMortgage);
-            model.addAttribute("calculations3", calculations3);
-        }
-        model.addAttribute("userMortgage", userMortgage);
-
-        return "mortgagedetails";
+        return calculationsMortgageList;
     }
 
     @ModelAttribute("answears")
@@ -80,19 +76,19 @@ public class HomeMortgageController {
         return List.of("TAK", "NIE");
     }
 
-    public CalculationsMortgage calculateMortgageParameteres(Long mortgageId, UserMortgage userMortgage) {
+    public CalculationsMortgage calculateMortgageParameteres(Long mortgageId, int amount, int creditPeriod, int age, String chooseServiceCharge, String chooseInsurance, BigDecimal contributionPercent) {
         Mortgage mortgage = mortgageRepository.findById(mortgageId).orElse(new Mortgage());
 
-        BigDecimal payment = mortgageService.calculateChoosenMortgagePayment(mortgage, userMortgage.getAmount(), userMortgage.getCreditPeriod());
+        BigDecimal payment = mortgageService.calculateChoosenMortgagePayment(mortgage, amount, creditPeriod);
 
-        BigDecimal serviceCharge = mortgageService.calculateServiceCharge(mortgage, userMortgage.getAmount());
+        BigDecimal serviceCharge = mortgageService.calculateServiceCharge(mortgage, amount);
 
-        BigDecimal insurance = mortgageService.calculateInsurance(mortgage, userMortgage.getAmount());
+        BigDecimal insurance = mortgageService.calculateInsurance(mortgage, amount);
 
-        BigDecimal interests = mortgageService.calculateInterestsCost(mortgage, userMortgage.getAmount(), userMortgage.getCreditPeriod(), payment, serviceCharge, insurance);
+        BigDecimal interests = mortgageService.calculateInterestsCost(mortgage, amount, creditPeriod, payment, serviceCharge, insurance);
 
-        BigDecimal totalCost = mortgageService.calculateTotalCost(mortgage, userMortgage.getAmount(), userMortgage.getCreditPeriod(), payment);
+        BigDecimal totalCost = mortgageService.calculateTotalCost(mortgage, amount, creditPeriod, payment);
 
-        return new CalculationsMortgage(mortgage, payment, serviceCharge, insurance, interests, totalCost);
+        return new CalculationsMortgage(mortgage, payment, serviceCharge, insurance, interests, totalCost, mortgage.getBank().getLogo(), mortgage.getBank().getId());
     }
 }

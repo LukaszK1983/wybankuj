@@ -1,0 +1,123 @@
+.DivListOffers {
+    -webkit-box-shadow: 0px 4px 10px 0px rgba(84, 75, 61, 0.56);
+    -moz-box-shadow:    0px 4px 10px 0px rgba(84, 75, 61, 0.56);
+    box-shadow:         0px 4px 10px 0px rgba(84, 75, 61, 0.56);
+}
+
+.Table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #1C3752;
+    text-align: center;
+}
+
+.Table td, .Table th {
+    padding: .75rem;
+    vertical-align: center;
+    border-top: 1px solid #dee2e6
+}
+
+.Table thead th {
+    vertical-align: center;
+    font-size: 1.2vmax;
+    border-bottom: 2px solid #dee2e6
+}
+
+.Table tbody+tbody {
+    border-top: 2px solid #dee2e6
+}
+
+.TableHover tbody tr:hover {
+    color: #1C3752;
+    background-color: rgba(0,0,0,.075)
+}
+
+.TheadLight th {
+    color: #495057;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.ThSticky {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999;
+    height: 6vmax;
+    vertical-align: middle;
+}
+
+.ThStickyCompare {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999;
+    height: 6vmax;
+    background-color: #FFFFFF;
+}
+
+.TdVerticalMiddle {
+    vertical-align: middle;
+}
+
+.TdVerticalMiddleWithFont {
+    vertical-align: middle;
+    font-weight: bold;
+    color: crimson;
+}
+
+.InfoAlert {
+    font-size: 8px;
+    text-align: justify;
+    color: #1C3752;
+    margin-bottom: 1vmax;
+}
+
+.TrMiddle {
+    vertical-align: middle;
+}
+
+.H3details {
+    text-align: center;
+    font-weight: bold;
+    color: #BF4042;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.PReturn {
+    color: #1C3752;
+}
+
+.DivFadeIn {
+    -webkit-animation: fadein 16s;
+    -moz-animation: fadein 16s;
+    -ms-animation: fadein 16s;
+    -o-animation: fadein 16s;
+    animation: fadein 16s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

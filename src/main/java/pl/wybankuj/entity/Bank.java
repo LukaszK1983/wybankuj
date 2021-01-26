@@ -1,5 +1,7 @@
 package pl.wybankuj.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -21,12 +23,15 @@ public class Bank {
     private String logo;
 
     @OneToMany(mappedBy = "bank", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<Agency> agencies = new ArrayList<>();
 
     @OneToMany(mappedBy = "bank", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<Loan> loans = new ArrayList<>();
 
     @OneToMany(mappedBy = "bank", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<Mortgage> mortgages = new ArrayList<>();
 
     public Bank() {
@@ -89,5 +94,17 @@ public class Bank {
 
     public void setMortgages(List<Mortgage> mortgages) {
         this.mortgages = mortgages;
+    }
+
+    @Override
+    public String toString() {
+        return "Bank{" +
+                "id=" + id +
+                ", bankName='" + bankName + '\'' +
+                ", logo='" + logo + '\'' +
+                ", agencies=" + agencies +
+                ", loans=" + loans +
+                ", mortgages=" + mortgages +
+                '}';
     }
 }

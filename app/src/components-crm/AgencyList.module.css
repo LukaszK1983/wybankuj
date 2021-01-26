@@ -1,0 +1,104 @@
+.thCenter {
+    text-align: center;
+}
+
+.tdActions {
+    text-align: center;
+}
+
+.linkStyle {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    margin-right: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .linkStyle {
+        transition: none
+    }
+}
+
+.linkStyle:hover {
+    color: #212529;
+    text-decoration: none
+}
+
+.linkStyle.focus, .linkStyle:focus {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25)
+}
+
+.linkStyle.disabled, .linkStyle:disabled {
+    opacity: .65
+}
+
+.linkStyleOutlinePrimary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.linkStyleOutlinePrimary:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff
+}
+
+.linkStyleOutlinePrimary.focus, .linkStyleOutlinePrimary:focus {
+    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .5)
+}
+
+.linkStyleOutlinePrimary.disabled, .linkStyleOutlinePrimary:disabled {
+    color: #007bff;
+    background-color: transparent
+}
+
+.linkStyleOutlinePrimary:not(:disabled):not(.disabled).active, .linkStyleOutlinePrimary:not(:disabled):not(.disabled):active, .show > .linkStyleOutlinePrimary.dropdown-toggle {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff
+}
+
+.linkStyleOutlinePrimary:not(:disabled):not(.disabled).active:focus, .linkStyleOutlinePrimary:not(:disabled):not(.disabled):active:focus, .show > .linkStyleOutlinePrimary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .5)
+}
+
+.linkStyleSm {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem
+}
+
+.rounded {
+    border-radius: .25rem !important
+}
+
+.fontThead {
+    font-size: 12px;
+}
+
+.fontTr {
+    font-size: 10px;
+}
+
+.ImgHeader {
+    width: 20vmax;
+}
+
+.mainDiv {
+    margin-bottom: 7vmax;
+}

@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 import pl.wybankuj.entity.Loan;
+import pl.wybankuj.entity.LoanWithPayment;
 import pl.wybankuj.entity.UserLoan;
 import pl.wybankuj.repository.LoanRepository;
 
@@ -30,13 +31,24 @@ public class LoanService {
         this.loanRepository = loanRepository;
     }
 
-    public Map<Loan, BigDecimal> calculateLoanPayment(List<Loan> loans, int amount, int creditPeriod, int age) {
-        Map<Loan, BigDecimal> loansWithPayments = new HashMap<>();
+    //    public Map<Loan, BigDecimal> calculateLoanPayment(List<Loan> loans, int amount, int creditPeriod, int age) {
+//        Map<Loan, BigDecimal> loansWithPayments = new HashMap<>();
+//
+//        for (Loan loan : loans) {
+//            loansWithPayments.put(loan, calculateChoosenLoanPayment(loan, amount, creditPeriod));
+//        }
+//        loansWithPayments = sortByPayment(loansWithPayments);
+//        return loansWithPayments;
+//    }
+    public List<LoanWithPayment> calculateLoanPayment(List<Loan> loans, int amount, int creditPeriod, int age) {
+        List<LoanWithPayment> loansWithPayments = new ArrayList<>();
 
         for (Loan loan : loans) {
-            loansWithPayments.put(loan, calculateChoosenLoanPayment(loan, amount, creditPeriod));
+            LoanWithPayment loanWithPayment = new LoanWithPayment(loan, loan.getBank().getId(), loan.getBank().getLogo(), calculateChoosenLoanPayment(loan, amount, creditPeriod));
+            loansWithPayments.add(loanWithPayment);
         }
-        loansWithPayments = sortByPayment(loansWithPayments);
+        loansWithPayments.sort(Comparator.comparing(LoanWithPayment::getPayment));
+
         return loansWithPayments;
     }
 

@@ -37,6 +37,12 @@ public class BankService {
         bankRepository.save(bankToSave);
     }
 
+    // pod React!
+    public Bank addBank(Bank bank) {
+        Bank bankToSave = new Bank(bank.getBankName(), bank.getLogo());
+        return bankRepository.save(bankToSave);
+    }
+
     public void editBank(MultipartFile file, Bank bank, String logo) throws IOException {
         if (file.isEmpty()) {
             String logoToSet = "logo" + bank.getBankName() + ".jpg";
@@ -54,6 +60,11 @@ public class BankService {
         file.transferTo(fileToUpload);
         bank.setLogo(logoName);
         bankRepository.save(bank);
+    }
+
+    // pod React
+    public Bank editBank2(Bank bank) {
+        return bankRepository.save(bank);
     }
 
     public void deleteBank(Long bankId) {

@@ -1,7 +1,9 @@
 package pl.wybankuj.service;
 
 import org.springframework.stereotype.Service;
+import pl.wybankuj.entity.LoanWithPayment;
 import pl.wybankuj.entity.Mortgage;
+import pl.wybankuj.entity.MortgageWithPayment;
 import pl.wybankuj.repository.MortgageRepository;
 
 import java.math.BigDecimal;
@@ -21,15 +23,26 @@ public class MortgageService {
         this.mortgageRepository = mortgageRepository;
     }
 
-    public Map<Mortgage, BigDecimal> calculateMortgagePayment(List<Mortgage> mortgages, int amount, int creditPeriod) {
-        Map<Mortgage, BigDecimal> mortgagesWithPayments = new HashMap<>();
+//    public Map<Mortgage, BigDecimal> calculateMortgagePayment(List<Mortgage> mortgages, int amount, int creditPeriod) {
+//        Map<Mortgage, BigDecimal> mortgagesWithPayments = new HashMap<>();
+//
+//        for (Mortgage mortgage : mortgages) {
+//            mortgagesWithPayments.put(mortgage, calculateChoosenMortgagePayment(mortgage, amount, creditPeriod));
+//        }
+//        mortgagesWithPayments = sortByPayment(mortgagesWithPayments);
+//        return mortgagesWithPayments;
+//    }
+public List<MortgageWithPayment> calculateMortgagePayment(List<Mortgage> mortgages, int amount, int creditPeriod) {
+    List<MortgageWithPayment> mortgagesWithPayments = new ArrayList<>();
 
-        for (Mortgage mortgage : mortgages) {
-            mortgagesWithPayments.put(mortgage, calculateChoosenMortgagePayment(mortgage, amount, creditPeriod));
-        }
-        mortgagesWithPayments = sortByPayment(mortgagesWithPayments);
-        return mortgagesWithPayments;
+    for (Mortgage mortgage : mortgages) {
+        MortgageWithPayment mortgageWithPayment = new MortgageWithPayment(mortgage, mortgage.getBank().getId(), mortgage.getBank().getLogo(), calculateChoosenMortgagePayment(mortgage, amount, creditPeriod));
+        mortgagesWithPayments.add(mortgageWithPayment);
     }
+    mortgagesWithPayments.sort(Comparator.comparing(MortgageWithPayment::getPayment));
+
+    return mortgagesWithPayments;
+}
 
     public BigDecimal calculateChoosenMortgagePayment(Mortgage mortgage, int amount, int creditPeriod) {
         BigDecimal rateRatio = BigDecimal.valueOf(1).add((mortgage.getCreditRate().divide(BigDecimal.valueOf(100), CALCULATE_SCALE, RoundingMode.CEILING)).divide(BigDecimal.valueOf(12), CALCULATE_SCALE, RoundingMode.CEILING));

@@ -1,0 +1,25 @@
+.ImgHeader {
+    width: 20vmax;
+}
+
+.DivHeader {
+    text-align: left;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-bottom: 1em solid #1C3752;
+    box-shadow: 2px 2px 2px 2px #BF4042;
+}
+
+.NavLinkHeader {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #1C3752;
+    font-size: 2vmax;
+    text-decoration: none;
+}
+
+.NavLinkHeader:hover {
+    text-decoration: none;
+    color: #BF4042;
+}

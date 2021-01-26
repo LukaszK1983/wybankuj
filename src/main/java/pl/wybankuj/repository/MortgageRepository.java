@@ -2,12 +2,14 @@ package pl.wybankuj.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import pl.wybankuj.entity.Mortgage;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface MortgageRepository extends CrudRepository<Mortgage, Long> {
 
     Optional<Mortgage> findById(Long id);

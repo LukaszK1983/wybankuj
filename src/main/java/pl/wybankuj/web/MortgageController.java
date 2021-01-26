@@ -1,80 +1,113 @@
 package pl.wybankuj.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.wybankuj.entity.Bank;
 import pl.wybankuj.entity.Mortgage;
-import pl.wybankuj.repository.BankRepository;
 import pl.wybankuj.repository.MortgageRepository;
+import pl.wybankuj.service.BankService;
 
-import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Controller
-@RequestMapping("/mortgage")
+@CrossOrigin(origins = "http://localhost:8081")
+@RestController
 public class MortgageController {
 
     private final MortgageRepository mortgageRepository;
-    private final BankRepository bankRepository;
+    private final BankService bankService;
 
-    public MortgageController(MortgageRepository mortgageRepository, BankRepository bankRepository) {
+    public MortgageController(MortgageRepository mortgageRepository, BankService bankService) {
         this.mortgageRepository = mortgageRepository;
-        this.bankRepository = bankRepository;
+        this.bankService = bankService;
     }
 
-    @GetMapping
-    public String allMortgages(@RequestParam Long bankId, Model model) {
-        model.addAttribute("mortgages", mortgageRepository.findAllByBankId(bankId));
-        model.addAttribute("bank", bankRepository.findById(bankId));
-        return "allmortgages";
-    }
+    @RequestMapping(
+            value = "/mortgages/{bankId}",
+            produces = "application/json",
+            method = {RequestMethod.GET})
+    public ResponseEntity<List<Mortgage>> allMortgages(@PathVariable("bankId") Long bankId) {
+        try {
+            List<Mortgage> mortgages = new ArrayList<>(mortgageRepository.findAllByBankId(bankId));
 
-    @GetMapping("/add")
-    public String addInitForm(@RequestParam Long bankId, Model model) {
-        model.addAttribute("mortgage", new Mortgage());
-        model.addAttribute("bank", bankRepository.findById(bankId));
-        return "addmortgage";
-    }
+            if (mortgages.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
 
-    @PostMapping("/add")
-    public String addPostForm(@Valid Mortgage mortgage, BindingResult bindingResult,
-                              @RequestParam Long bankId, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("bank", bankRepository.findById(bankId));
-            return "addmortgage";
+            return new ResponseEntity<>(mortgages, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        mortgageRepository.save(mortgage);
-        return "redirect:/mortgage?bankId=" + mortgage.getBank().getId() + "";
     }
 
-    @GetMapping("/edit")
-    public String editInitForm(@RequestParam Long id, @RequestParam Long bankId, Model model) {
-        model.addAttribute("mortgage", mortgageRepository.findById(id));
-        model.addAttribute("bank", bankRepository.findById(bankId));
-        return "editmortgage";
+    @RequestMapping(
+            value = "/mortgage/{id}",
+            produces = "application/json",
+            method = {RequestMethod.GET})
+    public ResponseEntity<Mortgage> getMortgageById(@PathVariable("id") Long id) {
+        Optional<Mortgage> mortgageData = mortgageRepository.findById(id);
+
+        return mortgageData.map(mortgage -> new ResponseEntity<>(mortgage, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/edit")
-    public String editPostForm(@Valid Mortgage mortgage, BindingResult bindingResult,
-                               @RequestParam Long bankId, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("bank", bankRepository.findById(bankId));
-            return "editmortgage";
+    @RequestMapping(
+            value = "/mortgage/add",
+            produces = "application/json",
+            method = {RequestMethod.POST})
+    public ResponseEntity<Mortgage> createMortgage(@RequestBody Mortgage mortgage) {
+        try {
+            Mortgage mortgageToSave = mortgageRepository.save(mortgage);
+            return new ResponseEntity<>(mortgageToSave, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        mortgageRepository.save(mortgage);
-        return "redirect:/mortgage?bankId=" + mortgage.getBank().getId() + "";
     }
 
-    @GetMapping("/delete")
-    public String deleteMortgage(@RequestParam Long id, @RequestParam Long bankId) {
-        mortgageRepository.deleteById(id);
-        return "redirect:/mortgage?bankId=" + bankId + "";
+    @RequestMapping(
+            value = "/mortgage/{id}",
+            produces = "application/json",
+            method = {RequestMethod.PUT})
+    public ResponseEntity<Mortgage> updateLoan(@PathVariable("id") long id, @RequestBody Mortgage mortgage) {
+        Optional<Mortgage> mortgageData = mortgageRepository.findById(id);
+
+        if (mortgageData.isPresent()) {
+            Mortgage mortgageToEdit = mortgageData.get();
+            mortgageToEdit.setOffer(mortgage.getOffer());
+            mortgageToEdit.setCreditRate(mortgage.getCreditRate());
+            mortgageToEdit.setServiceCharge(mortgage.getServiceCharge());
+            mortgageToEdit.setInsurance(mortgage.getInsurance());
+            mortgageToEdit.setContributionPercent(mortgage.getContributionPercent());
+            mortgageToEdit.setMinCreditAmount(mortgage.getMinCreditAmount());
+            mortgageToEdit.setMaxCreditAmount(mortgage.getMaxCreditAmount());
+            mortgageToEdit.setMinBorrowerAge(mortgage.getMinBorrowerAge());
+            mortgageToEdit.setMaxBorrowerAge(mortgage.getMaxBorrowerAge());
+            mortgageToEdit.setMaxCreditPeriod(mortgage.getMaxCreditPeriod());
+            return new ResponseEntity<>(mortgageRepository.save(mortgageToEdit), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(
+            value = "/mortgages/{id}",
+            produces = "application/json",
+            method = {RequestMethod.DELETE})
+    public ResponseEntity<HttpStatus> deleteMortgage(@PathVariable("id") Long id) {
+        try {
+            mortgageRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @ModelAttribute("banks")
     public List<Bank> banks() {
-        return (List<Bank>) bankRepository.findAll();
+        return (List<Bank>) bankService.findAllBanks();
     }
 }
