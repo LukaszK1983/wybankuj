@@ -1,20 +1,15 @@
 package pl.wybankuj.web;
 
-import com.itextpdf.text.DocumentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.wybankuj.entity.Calculations;
 import pl.wybankuj.entity.Loan;
 import pl.wybankuj.entity.LoanWithPayment;
-import pl.wybankuj.entity.UserLoan;
 import pl.wybankuj.repository.LoanRepository;
 import pl.wybankuj.service.LoanService;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,14 +72,6 @@ public class HomeLoanController {
         calculationsList.add(calculations);
 
         return calculationsList;
-    }
-
-    @PostMapping("/generateOffer")
-    public String generateOfferToPDF(@RequestParam Long loanId, @ModelAttribute UserLoan userLoan, Model model) throws DocumentException, IOException, URISyntaxException {
-
-        model.addAttribute("userLoan", userLoan);
-
-        return "loandetails";
     }
 
     @ModelAttribute("answears")

@@ -19,7 +19,7 @@
         <java.version>13</java.version>
         <maven.compiler.source>13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
-        <guava.version>16.0.1</guava.version>
+        <guava.version>[24.1.1,]</guava.version>
         <lombok.version>1.18.10</lombok.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <junit.version>4.13.1</junit.version>

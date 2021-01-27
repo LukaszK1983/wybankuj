@@ -1,9 +1,5 @@
 package pl.wybankuj.service;
 
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 import pl.wybankuj.entity.Loan;
 import pl.wybankuj.entity.LoanWithPayment;
@@ -102,59 +98,5 @@ public class LoanService {
             loans = loanRepository.findAllByParameters(amount, creditPeriod, age);
         }
         return loans;
-    }
-
-    public void generatePDF(Loan loan, UserLoan userLoan, BigDecimal payment,
-                            BigDecimal serviceCharge, BigDecimal insurance,
-                            BigDecimal interests, BigDecimal totalCost) throws DocumentException, FileNotFoundException {
-
-        Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("symulacja.pdf"));
-
-        document.open();
-
-        Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
-        Chunk chunk = new Chunk(loan.getBank().getBankName() + " - Szczegóły oferty " + loan.getOffer(), font);
-
-        document.add(chunk);
-
-        PdfPTable table = new PdfPTable(2);
-
-        table.addCell("Bank");
-        table.addCell(loan.getBank().getBankName());
-        table.addCell("Oferta");
-        table.addCell(loan.getOffer());
-        table.addCell("Kwota");
-        table.addCell(String.format("%d zł", userLoan.getAmount()));
-        table.addCell("Okres");
-        table.addCell(String.format("%d mies.", userLoan.getCreditPeriod()));
-        table.addCell("Rata");
-        table.addCell(String.format("%.2f zł", payment));
-        table.addCell("Oprocentowanie");
-        table.addCell(String.format("%.2f", loan.getCreditRate()));
-        table.addCell("Prowizja");
-        table.addCell(String.format("%.2f zł", serviceCharge));
-        table.addCell("Ubezpieczenie");
-        table.addCell(String.format("%.2f zł", insurance));
-        table.addCell("Odsetki");
-        table.addCell(String.format("%.2f zł", interests));
-        table.addCell("Koszt całkowity");
-        table.addCell(String.format("%.2f zł", totalCost));
-
-        document.add(table);
-        document.close();
-    }
-
-    public void addTableHeader(PdfPTable table) {
-        PdfPCell header = new PdfPCell();
-        header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-        header.setBorderWidth(2);
-        table.addCell(header);
-    }
-
-    public void addTableCell(PdfPTable table) {
-        table.addCell("Row1, Cell1");
-        table.addCell("Row1, Cell2");
-        table.addCell("Row1, Cell3");
     }
 }
